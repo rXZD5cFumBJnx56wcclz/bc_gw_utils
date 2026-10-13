@@ -6,9 +6,8 @@ use crate::{impl_deref, impl_gw_src_single, impl_gw_src_vec};
 #[derive(Debug, Default, Clone)]
 pub struct SrcGw(pub Vec<Vec<f64>>);
 
-
 impl SrcGw {
-    pub fn push_vec(&mut self, src: &[Vec<f64>], used: &[SETTINGS_USED_USIZE]) {
+    pub fn push_vec(&mut self, src: &[Vec<f64>], used: &[SettingsUsedUsize]) {
         for used_src_el in used {
             self.0.push({
                 let sk = &src[used_src_el.index];
@@ -53,7 +52,7 @@ impl_deref!(SrcGw, Vec<Vec<f64>>);
 pub struct SrcGwSeries(pub Vec<f64>);
 
 impl SrcGwSeries {
-    pub fn push_vec(&mut self, src: &[Vec<f64>], used: &[SETTINGS_USED_USIZE]) {
+    pub fn push_vec(&mut self, src: &[Vec<f64>], used: &[SettingsUsedUsize]) {
         for used_src_el in used {
             self.0.push({
                 let sk = &src[used_src_el.index];
@@ -64,7 +63,7 @@ impl SrcGwSeries {
 
     pub fn push_map(&mut self, map: &MAP<&str, f64>, used: &[String]) {
         for used_ind in used {
-            self.0.push(map[used_ind.as_str()].clone());
+            self.0.push(map[used_ind.as_str()]);
         }
     }
 
@@ -88,16 +87,13 @@ mod test {
     use bc_test_kit::prelude::*;
     use bc_utils::other::transpose;
     use bc_utils_lg::test_state::prelude::*;
-    
+
     #[test]
     fn get_src_res_1() {
         let mut src = SrcGw::default();
         src.push_vec(&SRC_TRANSPOSE, &INDICATIONS["rma_1"].used_src);
         src.all_check(&INDICATIONS["rma_1"].procedure_used);
-        assert_eq_pr!(
-            &*src,
-            &transpose(vec![CLOSE[..49].to_vec()]),
-        )
+        assert_eq_pr!(&*src, &transpose(vec![CLOSE[..49].to_vec()]),)
     }
 
     #[test]
@@ -105,21 +101,18 @@ mod test {
         let mut src = SrcGwSeries::default();
         src.push_vec(&SRC_TRANSPOSE, &INDICATIONS["rma_1"].used_src);
         src.all_check(&INDICATIONS["rma_1"].procedure_used);
-        assert_eq_pr!(
-            &*src,
-            &vec![CLOSE[48]],
-        )
+        assert_eq_pr!(&*src, &vec![CLOSE[48]],)
     }
 
     #[test]
     fn get_src_series_res_2() {
         let mut src = SrcGwSeries::default();
         src.push_vec(&SRC_TRANSPOSE, &SIGNALS_TRAIN["mm_1"].used_src);
-        src.push_map(&MAP::from_iter([("rma_1", 1.)]),&SIGNALS_TRAIN["mm_1"].used_ind);
+        src.push_map(
+            &MAP::from_iter([("rma_1", 1.)]),
+            &SIGNALS_TRAIN["mm_1"].used_ind,
+        );
         src.all_check(&SIGNALS_TRAIN["mm_1"].procedure_used_src);
-        assert_eq_pr!(
-            &*src,
-            &vec![SRC_EL1[1], 1.,]
-        )
+        assert_eq_pr!(&*src, &vec![SRC_EL1[1], 1.,])
     }
 }

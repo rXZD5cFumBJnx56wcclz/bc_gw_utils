@@ -1,11 +1,12 @@
 [package]
 name = "bc_gw_utils"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 [dependencies]
 bc_utils_lg = {path = "../bc_utils_lg", features = ["test_state"]}
 bc_utils = {path = "../bc_utils"}
+pin-project = "1.1.13"
 
 [dev-dependencies]
 bc_test_kit = {path = "../bc_test_kit"}

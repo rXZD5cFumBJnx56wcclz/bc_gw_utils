@@ -1,5 +1,5 @@
+use bc_utils::other::{transpose_set, vec_len_sync_set};
 use bc_utils_lg::prelude::*;
-use bc_utils::other::{transpose_set, vec_len_sync_set,};
 
 use crate::{impl_deref, impl_gw_src_single, impl_gw_src_vec};
 
@@ -26,7 +26,6 @@ impl SignalsGw {
             self.transpose();
         }
     }
-
 }
 
 impl_gw_src_vec!(SignalsGw, Signal);
